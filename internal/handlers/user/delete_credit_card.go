@@ -1,15 +1,14 @@
 package user
 
 import (
-    "log"
+    // "log"
     "Rescounts_Task/internal/database"
     "net/http"
     "os"
 
     "github.com/gorilla/mux"
-    "github.com/stripe/stripe-go"
+    // "github.com/stripe/stripe-go"
     "github.com/stripe/stripe-go/client"
-    "github.com/google/uuid"
 )
 
 func DeleteCreditCard(w http.ResponseWriter, r *http.Request) {
@@ -19,13 +18,14 @@ func DeleteCreditCard(w http.ResponseWriter, r *http.Request) {
     sc := &client.API{}
     sc.Init(os.Getenv("STRIPE_SECRET_KEY"), nil)
 
-    card, err := database.DB.QueryRow("SELECT stripe_card_id FROM credit_cards WHERE id = $1", cardID).Scan()
+    var stripeCardID string
+    err := database.DB.QueryRow("SELECT stripe_card_id FROM credit_cards WHERE id = $1", cardID).Scan(&stripeCardID)
     if err != nil {
         http.Error(w, "Error finding credit card", http.StatusInternalServerError)
         return
     }
 
-    err = sc.Cards.Del(cardID, nil)
+    _, err = sc.Cards.Del(stripeCardID, nil)
     if err != nil {
         http.Error(w, "Error deleting credit card", http.StatusInternalServerError)
         return

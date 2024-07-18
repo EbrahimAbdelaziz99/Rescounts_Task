@@ -1,25 +1,21 @@
 package user
 
 import (
-    "encoding/json"
-    "log"
-    "Rescounts_Task/internal/database"
-    "net/http"
-    "os"
-    "time"
+	"encoding/json"
+	// "log"
+	"Rescounts_Task/internal/database"
+	"Rescounts_Task/internal/models"
+	"net/http"
+	"os"
+	"time"
 
-    "github.com/google/uuid"
-    "github.com/stripe/stripe-go"
-    "github.com/stripe/stripe-go/client"
+	"github.com/google/uuid"
+	"github.com/stripe/stripe-go"
+	"github.com/stripe/stripe-go/client"
 )
 
-type AddCreditCardRequest struct {
-    UserID      uuid.UUID `json:"user_id"`
-    CardToken   string    `json:"card_token"`
-}
-
 func AddCreditCard(w http.ResponseWriter, r *http.Request) {
-    var req AddCreditCardRequest
+    var req models.AddCreditCardRequest
     err := json.NewDecoder(r.Body).Decode(&req)
     if err != nil {
         http.Error(w, "Invalid request payload", http.StatusBadRequest)

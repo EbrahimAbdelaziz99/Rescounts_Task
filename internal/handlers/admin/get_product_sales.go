@@ -1,30 +1,18 @@
 package admin
 
 import (
-    "database/sql"
-    "encoding/json"
-    "log"
-    "Rescounts_Task/internal/database"
-    "net/http"
-    "time"
+	"database/sql"
+	"encoding/json"
 
-    "github.com/google/uuid"
+	// "log"
+	"Rescounts_Task/internal/database"
+	"Rescounts_Task/internal/models"
+	"net/http"
+	"time"
 )
 
-type ProductSalesRequest struct {
-    FromDate  string `json:"from_date"`
-    ToDate    string `json:"to_date"`
-    UserName  string `json:"user_name"`
-}
-
-type ProductSalesResponse struct {
-    ProductID uuid.UUID `json:"product_id"`
-    Quantity  int       `json:"quantity"`
-    Total     float64   `json:"total"`
-}
-
 func GetProductSales(w http.ResponseWriter, r *http.Request) {
-    var req ProductSalesRequest
+    var req models.ProductSalesRequest
     err := json.NewDecoder(r.Body).Decode(&req)
     if err != nil {
         http.Error(w, "Invalid request payload", http.StatusBadRequest)
@@ -42,8 +30,18 @@ func GetProductSales(w http.ResponseWriter, r *http.Request) {
              JOIN users u ON o.user_id = u.id`
 
     if req.FromDate != "" && req.ToDate != "" {
-        from, _ := time.Parse(time.RFC3339, req.FromDate)
-        to, _ := time.Parse(time.RFC3339, req.ToDate)
+        from, fromDateError := time.Parse(time.RFC3339, req.FromDate)
+        if fromDateError != nil {
+            http.Error(w, "Invalid FromDate format. Expected format: RFC3339", http.StatusBadRequest)
+            return
+        }
+
+        to, toDateError := time.Parse(time.RFC3339, req.ToDate)
+        if toDateError != nil {
+            http.Error(w, "Invalid ToDate format. Expected format: RFC3339", http.StatusBadRequest)
+            return
+        }
+
         query += " WHERE o.created_at BETWEEN $1 AND $2"
         args = append(args, from, to)
     }
@@ -67,9 +65,9 @@ func GetProductSales(w http.ResponseWriter, r *http.Request) {
     }
     defer rows.Close()
 
-    var sales []ProductSalesResponse
+    var sales []models.ProductSalesResponse
     for rows.Next() {
-        var s ProductSalesResponse
+        var s models.ProductSalesResponse
         err := rows.Scan(&s.ProductID, &s.Quantity, &s.Total)
         if err != nil {
             http.Error(w, "Error scanning sales data", http.StatusInternalServerError)

@@ -22,6 +22,6 @@ type OrderItem struct {
 }
 
 type BuyProductsRequest struct {
-    UserID   uuid.UUID `json:"user_id"`
-    Products []Product `json:"products"`
+    UserID   uuid.UUID       `json:"user_id"`
+    Products []OrderItem `json:"products"`
 }

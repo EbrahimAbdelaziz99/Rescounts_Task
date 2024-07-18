@@ -2,12 +2,10 @@ package user
 
 import (
     "encoding/json"
-    "log"
-    "/Rescounts-Task/internal/database"
-    "/Rescounts-Task/internal/models"
+    // "log"
+    "Rescounts_Task/internal/database"
+    "Rescounts_Task/internal/models"
     "net/http"
-
-    "github.com/google/uuid"
 )
 
 func ListProducts(w http.ResponseWriter, r *http.Request) {

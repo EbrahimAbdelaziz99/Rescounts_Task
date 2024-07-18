@@ -4,27 +4,26 @@ import (
     "encoding/json"
     "log"
     "Rescounts_Task/internal/database"
+    "Rescounts_Task/internal/models"
     "net/http"
+    "os"
     "time"
 
     "github.com/google/uuid"
+    "github.com/stripe/stripe-go"
+    "github.com/stripe/stripe-go/client"
 )
 
-type BuyProductsRequest struct {
-    UserID      uuid.UUID `json:"user_id"`
-    Products    []Product `json:"products"`
-}
-
-type Product struct {
-    ProductID uuid.UUID `json:"product_id"`
-    Quantity  int       `json:"quantity"`
-}
-
 func BuyProducts(w http.ResponseWriter, r *http.Request) {
-    var req BuyProductsRequest
+    var req models.BuyProductsRequest
     err := json.NewDecoder(r.Body).Decode(&req)
     if err != nil {
         http.Error(w, "Invalid request payload", http.StatusBadRequest)
+        return
+    }
+
+    if len(req.Products) == 0 {
+        http.Error(w, "No products to buy", http.StatusBadRequest)
         return
     }
 
@@ -39,20 +38,53 @@ func BuyProducts(w http.ResponseWriter, r *http.Request) {
         totalAmount += price * float64(p.Quantity)
     }
 
+    sc := &client.API{}
+    sc.Init(os.Getenv("STRIPE_SECRET_KEY"), nil)
+
+    paymentIntentParams := &stripe.PaymentIntentParams{
+        Amount:   stripe.Int64(int64(totalAmount * 100)), // Stripe expects the amount in cents
+        Currency: stripe.String(string(stripe.CurrencyUSD)),
+        PaymentMethodTypes: stripe.StringSlice([]string{
+            "card",
+        }),
+    }
+
+    paymentIntent, err := sc.PaymentIntents.New(paymentIntentParams)
+    if err != nil {
+        log.Printf("Error creating payment intent: %v", err)
+        http.Error(w, "Error creating payment intent", http.StatusInternalServerError)
+        return
+    }
+
+    // For simplicity, we'll assume payment is confirmed instantly.
+    // In a real application, you'd need to handle asynchronous payment confirmation.
+    if paymentIntent.Status != stripe.PaymentIntentStatusSucceeded {
+        http.Error(w, "Payment not successful", http.StatusPaymentRequired)
+        return
+    }
+
+    // Create order in database
     orderID := uuid.New()
     _, err = database.DB.Exec("INSERT INTO orders (id, user_id, total_amount, created_at) VALUES ($1, $2, $3, $4)", orderID, req.UserID, totalAmount, time.Now())
     if err != nil {
+        log.Printf("Error creating order: %v", err)
         http.Error(w, "Error creating order", http.StatusInternalServerError)
         return
     }
 
     for _, p := range req.Products {
-        _, err := database.DB.Exec("INSERT INTO order_items (id, order_id, product_id, quantity, price, created_at) VALUES ($1, $2, $3, $4, $5, $6)", uuid.New(), orderID, p.ProductID, p.Quantity, price, time.Now())
+        _, err := database.DB.Exec("INSERT INTO order_items (id, order_id, product_id, quantity, price, created_at) VALUES ($1, $2, $3, $4, $5, $6)", uuid.New(), orderID, p.ProductID, p.Quantity, p.Price, time.Now())
         if err != nil {
+            log.Printf("Error creating order items: %v", err)
             http.Error(w, "Error creating order items", http.StatusInternalServerError)
             return
         }
     }
 
+    // Respond to the client
     w.WriteHeader(http.StatusCreated)
+    json.NewEncoder(w).Encode(map[string]string{
+        "message": "Order created successfully",
+        "order_id": orderID.String(),
+    })
 }

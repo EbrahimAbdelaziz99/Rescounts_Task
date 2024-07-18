@@ -1,15 +1,14 @@
 package user
 
 import (
-    "database/sql"
-    "encoding/json"
-    "log"
-    "Rescounts_Task/internal/database"
-    "Rescounts_Task/internal/models"
-    "net/http"
+	"database/sql"
+	"encoding/json"
+	"Rescounts_Task/internal/database"
+	"Rescounts_Task/internal/models"
+	"net/http"
 
-    "github.com/google/uuid"
-    "golang.org/x/crypto/bcrypt"
+	"github.com/google/uuid"
+	"golang.org/x/crypto/bcrypt"
 )
 
 func SignUpUser(w http.ResponseWriter, r *http.Request) {

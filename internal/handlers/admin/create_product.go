@@ -1,23 +1,17 @@
 package admin
 
 import (
-    "encoding/json"
-    "log"
-    "Rescounts_Task/internal/database"
-    "net/http"
-    "time"
+	"encoding/json"
+	"Rescounts_Task/internal/database"
+	"Rescounts_Task/internal/models"
+	"net/http"
+	"time"
 
-    "github.com/google/uuid"
+	"github.com/google/uuid"
 )
 
-type CreateProductRequest struct {
-    Name        string  `json:"name"`
-    Description string  `json:"description"`
-    Price       float64 `json:"price"`
-}
-
 func CreateProduct(w http.ResponseWriter, r *http.Request) {
-    var req CreateProductRequest
+    var req models.CreateProductRequest
     err := json.NewDecoder(r.Body).Decode(&req)
     if err != nil {
         http.Error(w, "Invalid request payload", http.StatusBadRequest)

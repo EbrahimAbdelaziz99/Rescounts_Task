@@ -3,7 +3,7 @@ package user
 import (
     "database/sql"
     "encoding/json"
-    "log"
+    // "log"
     "Rescounts_Task/internal/database"
     "Rescounts_Task/internal/models"
     "net/http"
