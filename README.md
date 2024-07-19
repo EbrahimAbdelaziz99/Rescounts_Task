@@ -32,8 +32,6 @@ This project implements an HTTP web server using Go to manage users and products
 - Go
 - GorillaMux
 - PostgreSQL
-- Docker
-- Stripe API
 - Plain SQL (no ORM)
 
 ## Installation
@@ -58,7 +56,7 @@ This project implements an HTTP web server using Go to manage users and products
     ```
 
 5. **Create and initialize the database:**
-    Execute the SQL scripts in `db/init.sql` to set up the database schema.
+    Execute the SQL scripts in `migrations/init.sql` to set up the database schema.
 
 ## Configuration
 
