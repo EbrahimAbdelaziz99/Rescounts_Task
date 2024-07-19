@@ -10,12 +10,6 @@ This project implements an HTTP web server using Go to manage users and products
 - [Configuration](#configuration)
 - [Running the Server](#running-the-server)
 - [API Endpoints](#api-endpoints)
-- [Postman Collection](#postman-collection)
-- [Docker Setup](#docker-setup)
-- [Database Schema](#database-schema)
-- [Stripe Integration](#stripe-integration)
-- [Contributing](#contributing)
-- [License](#license)
 
 ## Features
 
