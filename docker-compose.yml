@@ -24,7 +24,7 @@ services:
       - DB_USER=myapp_user
       - DB_PASSWORD=password
       - DB_NAME=myapp
-      - STRIPE_SECRET_KEY=sk_test_51LokvrFgEyGZZGMlGasHKGKERIClNdL6mwtSFQeYi28EnSIqYle8fFvRovMT20LesylVZhDUfPSCt5QNH1hmKKOk00CqFEoPeE
+      - STRIPE_SECRET_KEY=your-YOUR_STRIPE_TEST_KEY
     ports:
       - "8080:8080"
     command: ["./server"]
