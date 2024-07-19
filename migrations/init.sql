@@ -1,12 +1,15 @@
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
     id UUID PRIMARY KEY,
     username VARCHAR(50) UNIQUE NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
+    stripe_customer_id VARCHAR(255),
     password TEXT NOT NULL,
-    role VARCHAR(10) NOT NULL
+    role VARCHAR(10) NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE products (
+CREATE TABLE IF NOT EXISTS products (
     id UUID PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     description TEXT,
@@ -15,7 +18,7 @@ CREATE TABLE products (
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE credit_cards (
+CREATE TABLE IF NOT EXISTS credit_cards (
     id UUID PRIMARY KEY,
     user_id UUID REFERENCES users(id),
     stripe_card_id TEXT NOT NULL,
@@ -25,14 +28,14 @@ CREATE TABLE credit_cards (
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE orders (
+CREATE TABLE IF NOT EXISTS orders (
     id UUID PRIMARY KEY,
     user_id UUID REFERENCES users(id),
     total_amount DECIMAL(10, 2) NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE order_items (
+CREATE TABLE IF NOT EXISTS order_items (
     id UUID PRIMARY KEY,
     order_id UUID REFERENCES orders(id),
     product_id UUID REFERENCES products(id),

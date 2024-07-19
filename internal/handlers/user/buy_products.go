@@ -1,17 +1,18 @@
 package user
 
 import (
-    "encoding/json"
-    "log"
-    "Rescounts_Task/internal/database"
-    "Rescounts_Task/internal/models"
-    "net/http"
-    "os"
-    "time"
+	"Rescounts_Task/internal/database"
+	"Rescounts_Task/internal/models"
+	"encoding/json"
+	"log"
+	"net/http"
+	"os"
+	"time"
 
-    "github.com/google/uuid"
-    "github.com/stripe/stripe-go"
-    "github.com/stripe/stripe-go/client"
+	"github.com/google/uuid"
+	"github.com/stripe/stripe-go"
+	"github.com/stripe/stripe-go/client"
+	"github.com/stripe/stripe-go/paymentintent"
 )
 
 func BuyProducts(w http.ResponseWriter, r *http.Request) {
@@ -42,22 +43,16 @@ func BuyProducts(w http.ResponseWriter, r *http.Request) {
     sc.Init(os.Getenv("STRIPE_SECRET_KEY"), nil)
 
     paymentIntentParams := &stripe.PaymentIntentParams{
-        Amount:   stripe.Int64(int64(totalAmount * 100)), // Stripe expects the amount in cents
+        Amount: stripe.Int64(1099),
         Currency: stripe.String(string(stripe.CurrencyUSD)),
-        PaymentMethodTypes: stripe.StringSlice([]string{
-            "card",
-        }),
-    }
-
-    paymentIntent, err := sc.PaymentIntents.New(paymentIntentParams)
+    };
+    paymentIntent, err := paymentintent.New(paymentIntentParams);
     if err != nil {
         log.Printf("Error creating payment intent: %v", err)
         http.Error(w, "Error creating payment intent", http.StatusInternalServerError)
         return
     }
 
-    // For simplicity, we'll assume payment is confirmed instantly.
-    // In a real application, you'd need to handle asynchronous payment confirmation.
     if paymentIntent.Status != stripe.PaymentIntentStatusSucceeded {
         http.Error(w, "Payment not successful", http.StatusPaymentRequired)
         return

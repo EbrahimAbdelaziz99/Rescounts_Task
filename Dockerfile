@@ -1,4 +1,4 @@
-FROM golang:1.20-alpine as builder
+FROM golang:1.22.5-alpine AS builder
 
 WORKDIR /Rescounts-Task
 
@@ -13,6 +13,8 @@ FROM alpine:latest
 
 WORKDIR /root/
 
-COPY --from=builder /app/server .
+COPY --from=builder /Rescounts-Task/server .
+
+COPY .env .env
 
 CMD ["./server"]

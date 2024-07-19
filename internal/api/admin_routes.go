@@ -7,9 +7,8 @@ import (
 )
 
 func RegisterAdminRoutes(router *mux.Router) {
-    s := router.PathPrefix("/admin").Subrouter();
-    s.HandleFunc("/products", admin.CreateProduct).Methods("POST")
-    s.HandleFunc("/products/{id}", admin.UpdateProduct).Methods("PUT")
-    s.HandleFunc("/products/{id}", admin.DeleteProduct).Methods("DELETE")
-    s.HandleFunc("/sales", admin.GetProductSales).Methods("POST")
+    router.HandleFunc("/products", admin.CreateProduct).Methods("POST")
+    router.HandleFunc("/products/{id}", admin.UpdateProduct).Methods("PUT")
+    router.HandleFunc("/products/{id}", admin.DeleteProduct).Methods("DELETE")
+    router.HandleFunc("/sales", admin.GetProductSales).Methods("POST")
 }

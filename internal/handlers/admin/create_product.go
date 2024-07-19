@@ -1,9 +1,10 @@
 package admin
 
 import (
-	"encoding/json"
 	"Rescounts_Task/internal/database"
 	"Rescounts_Task/internal/models"
+	"encoding/json"
+	// "log"
 	"net/http"
 	"time"
 
@@ -13,6 +14,7 @@ import (
 func CreateProduct(w http.ResponseWriter, r *http.Request) {
     var req models.CreateProductRequest
     err := json.NewDecoder(r.Body).Decode(&req)
+    // log.Fatalln(err)
     if err != nil {
         http.Error(w, "Invalid request payload", http.StatusBadRequest)
         return

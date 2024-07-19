@@ -5,9 +5,9 @@ services:
     image: postgres:13
     container_name: Rescounts_Task_db
     environment:
-      POSTGRES_USER: user
+      POSTGRES_USER: myapp_user
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: Rescounts_Task
+      POSTGRES_DB: myapp
     volumes:
       - db_data:/var/lib/postgresql/data
     ports:
@@ -21,10 +21,10 @@ services:
     environment:
       - DB_HOST=db
       - DB_PORT=5432
-      - DB_USER=user
+      - DB_USER=myapp_user
       - DB_PASSWORD=password
-      - DB_NAME=Rescounts_Task
-      - STRIPE_SECRET_KEY=your_stripe_secret_key
+      - DB_NAME=myapp
+      - STRIPE_SECRET_KEY=sk_test_51LokvrFgEyGZZGMlGasHKGKERIClNdL6mwtSFQeYi28EnSIqYle8fFvRovMT20LesylVZhDUfPSCt5QNH1hmKKOk00CqFEoPeE
     ports:
       - "8080:8080"
     command: ["./server"]
