@@ -46,7 +46,7 @@ This project implements an HTTP web server using Go to manage users and products
 
 1. **Clone the repository:**
     ```bash
-    git clone https://github.com/.git
+    git clone https://github.com/EbrahimAbdelaziz99/Rescounts_Task.git
     cd user-product-management
     ```
 
